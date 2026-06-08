@@ -2,86 +2,79 @@
 
 local M = {}
 
+local freezeActive = false
+local freezeTimer = 0
+local honkTimer = 0
+local smokeTimer = 0
+local blackoutTimer = 0
+
 local function onBeamAdminTroll(payload)
   local action, strengthStr, durationStr = payload:match("([^|]+)|([^|]+)|([^|]+)")
   if not action then return end
   local strength = tonumber(strengthStr) or 70
   local duration = tonumber(durationStr) or 0
 
-  local vehicle = be:getObjectByID(be:getPlayerVehicleID(0))
-  if not vehicle then return end
-
   local ok, err = pcall(function()
     if action == "fling" then
-      local dir = vehicle:getDirectionVector()
-      vehicle:setVelocity(vec3(dir.x * strength, dir.y * strength, strength * 0.6))
+      local dir = obj:getDirectionVector()
+      obj:applyForce(vec3(dir.x * strength * 800, dir.y * strength * 800, strength * 600))
 
     elseif action == "launch" then
-      vehicle:setVelocity(vec3(0, 0, strength * 1.5))
+      obj:applyForce(vec3(0, 0, strength * 1200))
 
     elseif action == "nudge" then
-      vehicle:setVelocity(vec3((math.random() - 0.5) * strength, (math.random() - 0.5) * strength, 2))
+      obj:applyForce(vec3((math.random() - 0.5) * strength * 400, (math.random() - 0.5) * strength * 400, 0))
 
     elseif action == "spin" then
-      vehicle:setAngularVelocity(vec3(0, 0, strength * 0.3))
+      obj:applyForce(vec3(strength * 300, 0, 0))
 
     elseif action == "flip" then
-      local pos = vehicle:getPosition()
-      local rot = vehicle:getRotation()
-      local flipped = quat(rot.x, rot.y, rot.z, rot.w) * quat(math.sin(math.pi/2), 0, 0, math.cos(math.pi/2))
-      vehicle:setTransform(pos, flipped)
+      obj:applyForce(vec3(0, 0, strength * 400))
+      obj:applyForce(vec3(strength * 600, 0, 0))
 
     elseif action == "freeze" then
-      vehicle:setVelocity(vec3(0, 0, 0))
-      vehicle:setAngularVelocity(vec3(0, 0, 0))
-      if duration > 0 then
-        Engine.Schedule(duration * 1000, function()
-          -- unfreeze is a no-op; physics resumes on its own
-        end)
-      end
+      freezeActive = true
+      freezeTimer = duration > 0 and duration or 8
 
     elseif action == "unfreeze" then
-      -- no-op: physics resumes automatically
+      freezeActive = false
+      freezeTimer = 0
 
     elseif action == "killengine" then
-      electrics.values.ignitionLevel = 0
-      electrics.values.engineRunning = 0
-      input.event("ignition", 0, FILTER_DIRECT)
+      local engine = powertrain.getDevice("mainEngine")
+      if engine then engine:disable() end
 
     elseif action == "poptires" then
-      for i = 0, wheels.wheelCount - 1 do
-        wheels.setTirePressure(i, 0)
+      if wheels and wheels.wheels then
+        for i = 0, #wheels.wheels - 1 do
+          local wheel = wheels.wheels[i]
+          if wheel and wheel.nodes then
+            for _, nodeIdx in ipairs(wheel.nodes) do
+              beamstate.setBeamBroken(nodeIdx)
+            end
+          end
+        end
       end
 
     elseif action == "repair" then
-      vehicle:requestReset(RESET_PHYSICS)
+      if obj.resetBrokenFlexMesh then obj:resetBrokenFlexMesh() end
+      if beamstate and beamstate.reset then beamstate.reset() end
 
     elseif action == "reset" then
-      vehicle:requestReset(RESET_POSITION)
+      recovery.loadLastRoadPosition()
 
     elseif action == "blackout" then
-      electrics.values.lights = 0
-      electrics.values.headlights = 0
-      electrics.values.fog = 0
       input.event("lights", 0, FILTER_DIRECT)
+      blackoutTimer = duration > 0 and duration or 10
 
     elseif action == "honk" then
       input.event("horn", 1, FILTER_DIRECT)
-      if duration > 0 then
-        Engine.Schedule(duration * 1000, function()
-          input.event("horn", 0, FILTER_DIRECT)
-        end)
-      end
+      honkTimer = duration > 0 and duration or 6
 
     elseif action == "smoke" then
       input.event("throttle", 1, FILTER_DIRECT)
       input.event("brake", 1, FILTER_DIRECT)
-      if duration > 0 then
-        Engine.Schedule(duration * 1000, function()
-          input.event("throttle", 0, FILTER_DIRECT)
-          input.event("brake", 0, FILTER_DIRECT)
-        end)
-      end
+      smokeTimer = duration > 0 and duration or 8
     end
   end)
 
@@ -90,6 +83,44 @@ local function onBeamAdminTroll(payload)
   end
 end
 
+local function updateGFX(dt)
+  if freezeActive then
+    local mass = 1500
+    if obj.getMass then mass = obj:getMass() end
+    obj:applyForce(vec3(0, 0, 9.81 * mass))
+    freezeTimer = freezeTimer - dt
+    if freezeTimer <= 0 then
+      freezeActive = false
+    end
+  end
+
+  if honkTimer > 0 then
+    honkTimer = honkTimer - dt
+    if honkTimer <= 0 then
+      input.event("horn", 0, FILTER_DIRECT)
+    end
+  end
+
+  if smokeTimer > 0 then
+    smokeTimer = smokeTimer - dt
+    if smokeTimer <= 0 then
+      input.event("throttle", 0, FILTER_DIRECT)
+      input.event("brake", 0, FILTER_DIRECT)
+    end
+  end
+
+  if blackoutTimer > 0 then
+    blackoutTimer = blackoutTimer - dt
+    if blackoutTimer <= 0 then
+      input.event("lights", 1, FILTER_DIRECT)
+    end
+  end
+end
+
+M.updateGFX = updateGFX
+
 MP.RegisterEvent("beamadmin_troll", "onBeamAdminTroll")
+
+log('I', 'beamadmin_troll', 'cl_troll.lua loaded and event registered')
 
 return M
