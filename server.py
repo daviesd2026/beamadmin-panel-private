@@ -503,6 +503,7 @@ class Handler(BaseHTTPRequestHandler):
                 "playerName": safe_text(body.get("playerName"), ""),
                 "accountId": safe_text(body.get("accountId"), ""),
                 "ip": safe_text(body.get("ip"), ""),
+                "trollAction": safe_text(body.get("trollAction"), parts[3]),
                 "strength": safe_text(body.get("strength"), "70"),
                 "duration": safe_text(body.get("duration"), ""),
                 "reason": safe_text(body.get("reason"), "Admin action from BeamAdmin"),

@@ -248,10 +248,9 @@ local function executeCommand(command)
         local strength = clampNumber(command.strength, 70, 10, 200)
         local duration = 0
         local payload = "fling|" .. tostring(strength) .. "|" .. tostring(duration)
-        local ok, sent, err = pcall(function() return MP.TriggerClientEvent(playerId, "beamadmin_troll", payload) end)
-        if not ok then return false, "fling failed: " .. tostring(sent) end
-        if sent == false then return false, "fling delivery failed: " .. tostring(err or "") end
-        if MP.SendChatMessage then MP.SendChatMessage(playerId, "[BeamAdmin] fling delivered") end
+        local ok, err = pcall(function() MP.TriggerClientEvent(playerId, "beamadmin_troll", payload) end)
+        if not ok then return false, "fling failed: " .. tostring(err) end
+        if MP.SendChatMessage then MP.SendChatMessage(playerId, "[BeamAdmin] " .. "fling") end
         return true, "fling delivered to " .. tostring(playerName)
     end
 
@@ -259,13 +258,12 @@ local function executeCommand(command)
         if not MP.TriggerClientEvent then
             return false, "TriggerClientEvent unavailable; ensure BeamMP server supports client events and cl_troll.lua is installed"
         end
-        local strength = clampNumber(command.strength, 70, 10, 200)
+        local strength = clampNumber(command.strength, 130, 10, 200)
         local duration = 0
         local payload = "launch|" .. tostring(strength) .. "|" .. tostring(duration)
-        local ok, sent, err = pcall(function() return MP.TriggerClientEvent(playerId, "beamadmin_troll", payload) end)
-        if not ok then return false, "launch failed: " .. tostring(sent) end
-        if sent == false then return false, "launch delivery failed: " .. tostring(err or "") end
-        if MP.SendChatMessage then MP.SendChatMessage(playerId, "[BeamAdmin] launch delivered") end
+        local ok, err = pcall(function() MP.TriggerClientEvent(playerId, "beamadmin_troll", payload) end)
+        if not ok then return false, "launch failed: " .. tostring(err) end
+        if MP.SendChatMessage then MP.SendChatMessage(playerId, "[BeamAdmin] " .. "launch") end
         return true, "launch delivered to " .. tostring(playerName)
     end
 
@@ -273,13 +271,12 @@ local function executeCommand(command)
         if not MP.TriggerClientEvent then
             return false, "TriggerClientEvent unavailable; ensure BeamMP server supports client events and cl_troll.lua is installed"
         end
-        local strength = clampNumber(command.strength, 70, 10, 200)
+        local strength = clampNumber(command.strength, 35, 10, 200)
         local duration = 0
         local payload = "nudge|" .. tostring(strength) .. "|" .. tostring(duration)
-        local ok, sent, err = pcall(function() return MP.TriggerClientEvent(playerId, "beamadmin_troll", payload) end)
-        if not ok then return false, "nudge failed: " .. tostring(sent) end
-        if sent == false then return false, "nudge delivery failed: " .. tostring(err or "") end
-        if MP.SendChatMessage then MP.SendChatMessage(playerId, "[BeamAdmin] nudge delivered") end
+        local ok, err = pcall(function() MP.TriggerClientEvent(playerId, "beamadmin_troll", payload) end)
+        if not ok then return false, "nudge failed: " .. tostring(err) end
+        if MP.SendChatMessage then MP.SendChatMessage(playerId, "[BeamAdmin] " .. "nudge") end
         return true, "nudge delivered to " .. tostring(playerName)
     end
 
@@ -287,13 +284,12 @@ local function executeCommand(command)
         if not MP.TriggerClientEvent then
             return false, "TriggerClientEvent unavailable; ensure BeamMP server supports client events and cl_troll.lua is installed"
         end
-        local strength = clampNumber(command.strength, 70, 10, 200)
-        local duration = clampNumber(command.duration, 3, 0, 60)
+        local strength = clampNumber(command.strength, 80, 10, 200)
+        local duration = clampNumber(command.duration, 5, 0, 60)
         local payload = "spin|" .. tostring(strength) .. "|" .. tostring(duration)
-        local ok, sent, err = pcall(function() return MP.TriggerClientEvent(playerId, "beamadmin_troll", payload) end)
-        if not ok then return false, "spin failed: " .. tostring(sent) end
-        if sent == false then return false, "spin delivery failed: " .. tostring(err or "") end
-        if MP.SendChatMessage then MP.SendChatMessage(playerId, "[BeamAdmin] spin delivered") end
+        local ok, err = pcall(function() MP.TriggerClientEvent(playerId, "beamadmin_troll", payload) end)
+        if not ok then return false, "spin failed: " .. tostring(err) end
+        if MP.SendChatMessage then MP.SendChatMessage(playerId, "[BeamAdmin] " .. "spin") end
         return true, "spin delivered to " .. tostring(playerName)
     end
 
@@ -302,10 +298,9 @@ local function executeCommand(command)
             return false, "TriggerClientEvent unavailable; ensure BeamMP server supports client events and cl_troll.lua is installed"
         end
         local payload = "flip|0|0"
-        local ok, sent, err = pcall(function() return MP.TriggerClientEvent(playerId, "beamadmin_troll", payload) end)
-        if not ok then return false, "flip failed: " .. tostring(sent) end
-        if sent == false then return false, "flip delivery failed: " .. tostring(err or "") end
-        if MP.SendChatMessage then MP.SendChatMessage(playerId, "[BeamAdmin] flip delivered") end
+        local ok, err = pcall(function() MP.TriggerClientEvent(playerId, "beamadmin_troll", payload) end)
+        if not ok then return false, "flip failed: " .. tostring(err) end
+        if MP.SendChatMessage then MP.SendChatMessage(playerId, "[BeamAdmin] " .. "flip") end
         return true, "flip delivered to " .. tostring(playerName)
     end
 
@@ -313,11 +308,11 @@ local function executeCommand(command)
         if not MP.TriggerClientEvent then
             return false, "TriggerClientEvent unavailable; ensure BeamMP server supports client events and cl_troll.lua is installed"
         end
-        local payload = "freeze|0|0"
-        local ok, sent, err = pcall(function() return MP.TriggerClientEvent(playerId, "beamadmin_troll", payload) end)
-        if not ok then return false, "freeze failed: " .. tostring(sent) end
-        if sent == false then return false, "freeze delivery failed: " .. tostring(err or "") end
-        if MP.SendChatMessage then MP.SendChatMessage(playerId, "[BeamAdmin] freeze delivered") end
+        local duration = clampNumber(command.duration, 8, 0, 60)
+        local payload = "freeze|0|" .. tostring(duration)
+        local ok, err = pcall(function() MP.TriggerClientEvent(playerId, "beamadmin_troll", payload) end)
+        if not ok then return false, "freeze failed: " .. tostring(err) end
+        if MP.SendChatMessage then MP.SendChatMessage(playerId, "[BeamAdmin] " .. "freeze") end
         return true, "freeze delivered to " .. tostring(playerName)
     end
 
@@ -326,10 +321,9 @@ local function executeCommand(command)
             return false, "TriggerClientEvent unavailable; ensure BeamMP server supports client events and cl_troll.lua is installed"
         end
         local payload = "unfreeze|0|0"
-        local ok, sent, err = pcall(function() return MP.TriggerClientEvent(playerId, "beamadmin_troll", payload) end)
-        if not ok then return false, "unfreeze failed: " .. tostring(sent) end
-        if sent == false then return false, "unfreeze delivery failed: " .. tostring(err or "") end
-        if MP.SendChatMessage then MP.SendChatMessage(playerId, "[BeamAdmin] unfreeze delivered") end
+        local ok, err = pcall(function() MP.TriggerClientEvent(playerId, "beamadmin_troll", payload) end)
+        if not ok then return false, "unfreeze failed: " .. tostring(err) end
+        if MP.SendChatMessage then MP.SendChatMessage(playerId, "[BeamAdmin] " .. "unfreeze") end
         return true, "unfreeze delivered to " .. tostring(playerName)
     end
 
@@ -338,10 +332,9 @@ local function executeCommand(command)
             return false, "TriggerClientEvent unavailable; ensure BeamMP server supports client events and cl_troll.lua is installed"
         end
         local payload = "killengine|0|0"
-        local ok, sent, err = pcall(function() return MP.TriggerClientEvent(playerId, "beamadmin_troll", payload) end)
-        if not ok then return false, "killengine failed: " .. tostring(sent) end
-        if sent == false then return false, "killengine delivery failed: " .. tostring(err or "") end
-        if MP.SendChatMessage then MP.SendChatMessage(playerId, "[BeamAdmin] killengine delivered") end
+        local ok, err = pcall(function() MP.TriggerClientEvent(playerId, "beamadmin_troll", payload) end)
+        if not ok then return false, "killengine failed: " .. tostring(err) end
+        if MP.SendChatMessage then MP.SendChatMessage(playerId, "[BeamAdmin] " .. "killengine") end
         return true, "killengine delivered to " .. tostring(playerName)
     end
 
@@ -350,10 +343,9 @@ local function executeCommand(command)
             return false, "TriggerClientEvent unavailable; ensure BeamMP server supports client events and cl_troll.lua is installed"
         end
         local payload = "poptires|0|0"
-        local ok, sent, err = pcall(function() return MP.TriggerClientEvent(playerId, "beamadmin_troll", payload) end)
-        if not ok then return false, "poptires failed: " .. tostring(sent) end
-        if sent == false then return false, "poptires delivery failed: " .. tostring(err or "") end
-        if MP.SendChatMessage then MP.SendChatMessage(playerId, "[BeamAdmin] poptires delivered") end
+        local ok, err = pcall(function() MP.TriggerClientEvent(playerId, "beamadmin_troll", payload) end)
+        if not ok then return false, "poptires failed: " .. tostring(err) end
+        if MP.SendChatMessage then MP.SendChatMessage(playerId, "[BeamAdmin] " .. "poptires") end
         return true, "poptires delivered to " .. tostring(playerName)
     end
 
@@ -362,10 +354,9 @@ local function executeCommand(command)
             return false, "TriggerClientEvent unavailable; ensure BeamMP server supports client events and cl_troll.lua is installed"
         end
         local payload = "repair|0|0"
-        local ok, sent, err = pcall(function() return MP.TriggerClientEvent(playerId, "beamadmin_troll", payload) end)
-        if not ok then return false, "repair failed: " .. tostring(sent) end
-        if sent == false then return false, "repair delivery failed: " .. tostring(err or "") end
-        if MP.SendChatMessage then MP.SendChatMessage(playerId, "[BeamAdmin] repair delivered") end
+        local ok, err = pcall(function() MP.TriggerClientEvent(playerId, "beamadmin_troll", payload) end)
+        if not ok then return false, "repair failed: " .. tostring(err) end
+        if MP.SendChatMessage then MP.SendChatMessage(playerId, "[BeamAdmin] " .. "repair") end
         return true, "repair delivered to " .. tostring(playerName)
     end
 
@@ -374,10 +365,9 @@ local function executeCommand(command)
             return false, "TriggerClientEvent unavailable; ensure BeamMP server supports client events and cl_troll.lua is installed"
         end
         local payload = "reset|0|0"
-        local ok, sent, err = pcall(function() return MP.TriggerClientEvent(playerId, "beamadmin_troll", payload) end)
-        if not ok then return false, "reset failed: " .. tostring(sent) end
-        if sent == false then return false, "reset delivery failed: " .. tostring(err or "") end
-        if MP.SendChatMessage then MP.SendChatMessage(playerId, "[BeamAdmin] reset delivered") end
+        local ok, err = pcall(function() MP.TriggerClientEvent(playerId, "beamadmin_troll", payload) end)
+        if not ok then return false, "reset failed: " .. tostring(err) end
+        if MP.SendChatMessage then MP.SendChatMessage(playerId, "[BeamAdmin] " .. "reset") end
         return true, "reset delivered to " .. tostring(playerName)
     end
 
@@ -385,12 +375,11 @@ local function executeCommand(command)
         if not MP.TriggerClientEvent then
             return false, "TriggerClientEvent unavailable; ensure BeamMP server supports client events and cl_troll.lua is installed"
         end
-        local duration = clampNumber(command.duration, 3, 0, 60)
+        local duration = clampNumber(command.duration, 10, 0, 60)
         local payload = "blackout|0|" .. tostring(duration)
-        local ok, sent, err = pcall(function() return MP.TriggerClientEvent(playerId, "beamadmin_troll", payload) end)
-        if not ok then return false, "blackout failed: " .. tostring(sent) end
-        if sent == false then return false, "blackout delivery failed: " .. tostring(err or "") end
-        if MP.SendChatMessage then MP.SendChatMessage(playerId, "[BeamAdmin] blackout delivered") end
+        local ok, err = pcall(function() MP.TriggerClientEvent(playerId, "beamadmin_troll", payload) end)
+        if not ok then return false, "blackout failed: " .. tostring(err) end
+        if MP.SendChatMessage then MP.SendChatMessage(playerId, "[BeamAdmin] " .. "blackout") end
         return true, "blackout delivered to " .. tostring(playerName)
     end
 
@@ -398,12 +387,11 @@ local function executeCommand(command)
         if not MP.TriggerClientEvent then
             return false, "TriggerClientEvent unavailable; ensure BeamMP server supports client events and cl_troll.lua is installed"
         end
-        local duration = clampNumber(command.duration, 3, 0, 60)
+        local duration = clampNumber(command.duration, 6, 0, 60)
         local payload = "honk|0|" .. tostring(duration)
-        local ok, sent, err = pcall(function() return MP.TriggerClientEvent(playerId, "beamadmin_troll", payload) end)
-        if not ok then return false, "honk failed: " .. tostring(sent) end
-        if sent == false then return false, "honk delivery failed: " .. tostring(err or "") end
-        if MP.SendChatMessage then MP.SendChatMessage(playerId, "[BeamAdmin] honk delivered") end
+        local ok, err = pcall(function() MP.TriggerClientEvent(playerId, "beamadmin_troll", payload) end)
+        if not ok then return false, "honk failed: " .. tostring(err) end
+        if MP.SendChatMessage then MP.SendChatMessage(playerId, "[BeamAdmin] " .. "honk") end
         return true, "honk delivered to " .. tostring(playerName)
     end
 
@@ -412,12 +400,11 @@ local function executeCommand(command)
             return false, "TriggerClientEvent unavailable; ensure BeamMP server supports client events and cl_troll.lua is installed"
         end
         local strength = clampNumber(command.strength, 70, 10, 200)
-        local duration = clampNumber(command.duration, 3, 0, 60)
+        local duration = clampNumber(command.duration, 8, 0, 60)
         local payload = "smoke|" .. tostring(strength) .. "|" .. tostring(duration)
-        local ok, sent, err = pcall(function() return MP.TriggerClientEvent(playerId, "beamadmin_troll", payload) end)
-        if not ok then return false, "smoke failed: " .. tostring(sent) end
-        if sent == false then return false, "smoke delivery failed: " .. tostring(err or "") end
-        if MP.SendChatMessage then MP.SendChatMessage(playerId, "[BeamAdmin] smoke delivered") end
+        local ok, err = pcall(function() MP.TriggerClientEvent(playerId, "beamadmin_troll", payload) end)
+        if not ok then return false, "smoke failed: " .. tostring(err) end
+        if MP.SendChatMessage then MP.SendChatMessage(playerId, "[BeamAdmin] " .. "smoke") end
         return true, "smoke delivered to " .. tostring(playerName)
     end
 
