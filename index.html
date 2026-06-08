@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BeamAdmin — Server Panel</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.x/dist/tabler-icons.min.css" />
+</head>
+<body>
+
+  <!-- LOGIN SCREEN -->
+  <div id="login-screen" class="login-wrap">
+    <div class="login-card">
+      <div class="login-logo">
+        <div class="logo-icon"><i class="ti ti-steering-wheel"></i></div>
+        <div>
+          <div class="login-title">BeamAdmin</div>
+          <div class="login-sub-title">Server Admin Panel</div>
+        </div>
+      </div>
+      <p class="login-sub">Admin access only. Enter your credentials to continue.</p>
+      <div class="field">
+        <label for="username">Username</label>
+        <input type="text" id="username" placeholder="admin" autocomplete="off" />
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <div class="pw-wrap">
+          <input type="password" id="password" placeholder="••••••••" autocomplete="off" />
+          <button class="pw-toggle" id="pw-toggle" aria-label="Toggle password visibility" tabindex="-1">
+            <i class="ti ti-eye" id="eye-icon"></i>
+          </button>
+        </div>
+      </div>
+      <button class="login-btn" id="login-btn">
+        <i class="ti ti-lock"></i> Sign in
+      </button>
+      <div class="err" id="err-msg"></div>
+      <div class="attempts" id="attempts-txt">Demo: admin / beamng2024</div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD (hidden until login) -->
+  <div id="dashboard" class="shell hidden">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-icon-sm"><i class="ti ti-steering-wheel"></i></div>
+        <div>
+          <div class="logo-text">BeamAdmin</div>
+          <div class="logo-ver">v1.0</div>
+        </div>
+      </div>
+      <nav class="nav">
+        <span class="nav-section">Overview</span>
+        <button class="nav-item active" data-page="dashboard">
+          <i class="ti ti-layout-dashboard"></i> Dashboard
+        </button>
+        <button class="nav-item" data-page="players">
+          <i class="ti ti-users"></i> Players
+          <span class="badge badge-green ml-auto">5</span>
+        </button>
+        <button class="nav-item" data-page="vehicles">
+          <i class="ti ti-car"></i> Vehicles
+        </button>
+        <span class="nav-section">Manage</span>
+        <button class="nav-item" data-page="maps">
+          <i class="ti ti-map"></i> Maps
+        </button>
+        <button class="nav-item" data-page="mods">
+          <i class="ti ti-package"></i> Mods
+        </button>
+        <button class="nav-item" data-page="banlist">
+          <i class="ti ti-shield-off"></i> Ban list
+        </button>
+        <button class="nav-item" data-page="settings">
+          <i class="ti ti-settings"></i> Settings
+        </button>
+        <span class="nav-section">Tools</span>
+        <button class="nav-item" data-page="management">
+          <i class="ti ti-app-window"></i> Management Tool
+        </button>
+        <button class="nav-item" data-page="troll">
+          <i class="ti ti-mood-smile-beam"></i> Troll
+        </button>
+        <button class="nav-item" data-page="console">
+          <i class="ti ti-terminal"></i> Console
+        </button>
+        <button class="nav-item" data-page="logs">
+          <i class="ti ti-file-text"></i> Logs
+        </button>
+      </nav>
+      <div class="sidebar-footer">
+        <span class="status-dot"></span>
+        <span class="status-txt">Online · 2h 41m</span>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="main">
+      <header class="topbar">
+        <div class="topbar-title" id="page-title">Dashboard</div>
+        <div class="topbar-right">
+          <div class="admin-pill">
+            <i class="ti ti-shield-check"></i>
+            <span id="logged-in-user">admin</span>
+          </div>
+          <span class="badge badge-green">
+            <i class="ti ti-circle-filled" style="font-size:8px;vertical-align:1px;margin-right:3px"></i>Online
+          </span>
+          <button class="logout-btn" id="logout-btn">
+            <i class="ti ti-logout"></i> Sign out
+          </button>
+        </div>
+      </header>
+
+      <!-- PAGE: DASHBOARD -->
+      <div class="content page" id="page-dashboard">
+        <div class="metrics">
+          <div class="metric">
+            <div class="metric-label">Players</div>
+            <div class="metric-value">5 <span class="metric-max">/16</span></div>
+            <div class="metric-sub">2 in queue</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Avg ping</div>
+            <div class="metric-value">42<span class="metric-unit">ms</span></div>
+            <div class="metric-sub">Max 118ms</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">TPS</div>
+            <div class="metric-value">60<span class="metric-unit">hz</span></div>
+            <div class="metric-sub">Stable</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Map</div>
+            <div class="metric-value metric-value--sm">West Coast</div>
+            <div class="metric-sub">USA</div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-header">
+            <span class="section-title">Active players</span>
+            <button class="act-btn">Kick all</button>
+          </div>
+          <div class="card">
+            <table class="player-table">
+              <thead>
+                <tr>
+                  <th>Player</th>
+                  <th>Vehicle</th>
+                  <th>Ping</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><div class="player-name"><div class="avatar av-a">SD</div>SpeedDemon99</div></td>
+                  <td>Hirochi Sunburst</td>
+                  <td><div class="ping-bar"><div class="ping-fill" style="width:18px;background:#639922"></div>28ms</div></td>
+                  <td><span class="badge badge-green">Driving</span></td>
+                  <td><div class="row-actions">
+                    <button class="act-btn"><i class="ti ti-message"></i></button>
+                    <button class="act-btn"><i class="ti ti-ban"></i></button>
+                    <button class="act-btn danger"><i class="ti ti-logout"></i> Kick</button>
+                  </div></td>
+                </tr>
+                <tr>
+                  <td><div class="player-name"><div class="avatar av-b">GT</div>GravityTuner</div></td>
+                  <td>ETK 800</td>
+                  <td><div class="ping-bar"><div class="ping-fill" style="width:28px;background:#BA7517"></div>62ms</div></td>
+                  <td><span class="badge badge-green">Driving</span></td>
+                  <td><div class="row-actions">
+                    <button class="act-btn"><i class="ti ti-message"></i></button>
+                    <button class="act-btn"><i class="ti ti-ban"></i></button>
+                    <button class="act-btn danger"><i class="ti ti-logout"></i> Kick</button>
+                  </div></td>
+                </tr>
+                <tr>
+                  <td><div class="player-name"><div class="avatar av-c">NX</div>NitroX</div></td>
+                  <td>Gavril D-Series</td>
+                  <td><div class="ping-bar"><div class="ping-fill" style="width:44px;background:#E24B4A"></div>118ms</div></td>
+                  <td><span class="badge badge-amber">High ping</span></td>
+                  <td><div class="row-actions">
+                    <button class="act-btn"><i class="ti ti-message"></i></button>
+                    <button class="act-btn"><i class="ti ti-ban"></i></button>
+                    <button class="act-btn danger"><i class="ti ti-logout"></i> Kick</button>
+                  </div></td>
+                </tr>
+                <tr>
+                  <td><div class="player-name"><div class="avatar av-d">CL</div>CrashLord42</div></td>
+                  <td>Civetta Bolide</td>
+                  <td><div class="ping-bar"><div class="ping-fill" style="width:20px;background:#639922"></div>34ms</div></td>
+                  <td><span class="badge badge-red">AFK</span></td>
+                  <td><div class="row-actions">
+                    <button class="act-btn"><i class="ti ti-message"></i></button>
+                    <button class="act-btn"><i class="ti ti-ban"></i></button>
+                    <button class="act-btn danger"><i class="ti ti-logout"></i> Kick</button>
+                  </div></td>
+                </tr>
+                <tr>
+                  <td><div class="player-name"><div class="avatar av-e">VR</div>VelocityRacer</div></td>
+                  <td>Ibishu Covet</td>
+                  <td><div class="ping-bar"><div class="ping-fill" style="width:22px;background:#639922"></div>41ms</div></td>
+                  <td><span class="badge badge-green">Driving</span></td>
+                  <td><div class="row-actions">
+                    <button class="act-btn"><i class="ti ti-message"></i></button>
+                    <button class="act-btn"><i class="ti ti-ban"></i></button>
+                    <button class="act-btn danger"><i class="ti ti-logout"></i> Kick</button>
+                  </div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="section">
+            <div class="section-header"><span class="section-title">Activity log</span></div>
+            <div class="card">
+              <div class="log-list">
+                <div class="log-line"><span class="log-time">14:32</span><span class="log-join">+ VelocityRacer joined</span></div>
+                <div class="log-line"><span class="log-time">14:28</span><span class="log-warn">⚠ NitroX ping spike 200ms</span></div>
+                <div class="log-line"><span class="log-time">14:21</span><span class="log-join">+ CrashLord42 joined</span></div>
+                <div class="log-line"><span class="log-time">14:15</span><span class="log-leave">– Drifter_UK left</span></div>
+                <div class="log-line"><span class="log-time">14:09</span><span class="log-join">+ NitroX joined</span></div>
+                <div class="log-line"><span class="log-time">13:55</span><span>Map loaded: West Coast USA</span></div>
+                <div class="log-line"><span class="log-time">13:51</span><span class="log-join">Server started</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="section">
+            <div class="section-header">
+              <span class="section-title">Live chat</span>
+              <button class="act-btn">Broadcast</button>
+            </div>
+            <div class="card">
+              <div class="chat-list">
+                <div class="chat-msg"><span class="chat-who">SpeedDemon99</span><span class="chat-when">14:31</span><br><span class="chat-text">anyone doing hill climb?</span></div>
+                <div class="chat-msg"><span class="chat-who">GravityTuner</span><span class="chat-when">14:30</span><br><span class="chat-text">nice drift back there lol</span></div>
+                <div class="chat-msg"><span class="chat-who">NitroX</span><span class="chat-when">14:27</span><br><span class="chat-text">my ping is lagging sorry</span></div>
+                <div class="chat-msg"><span class="chat-who">CrashLord42</span><span class="chat-when">14:20</span><br><span class="chat-text">just gonna park and watch</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAGE: PLACEHOLDER (other nav items) -->
+      <div class="content page hidden" id="page-other">
+        <div class="placeholder-page">
+          <i class="ti ti-tool" style="font-size:40px;color:var(--text-muted)"></i>
+          <p id="placeholder-title">This page</p>
+          <p style="color:var(--text-muted);font-size:14px">Connect this to your BeamNG server API to populate live data.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="app.js?v=20260608-trollrefine1"></script>
+</body>
+</html>
