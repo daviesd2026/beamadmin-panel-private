@@ -490,7 +490,7 @@ class Handler(BaseHTTPRequestHandler):
             return
 
         parts = path.strip("/").split("/")
-        if len(parts) == 4 and parts[0] == "api" and parts[1] == "servers" and parts[3] in ({"kick", "ban", "unban"} | TROLL_ACTIONS):
+        if len(parts) == 4 and parts[0] == "api" and parts[1] == "servers" and parts[3] in ("kick", "ban", "unban", "fling", "troll", "launch", "nudge", "spin", "flip", "freeze", "unfreeze", "killengine", "poptires", "repair", "reset", "blackout", "honk", "smoke"):
             server = server_by_id(parts[2], getattr(self, "current_username", ""))
             if not server:
                 self.send_json(404, {"error": "server not found"})
@@ -507,7 +507,7 @@ class Handler(BaseHTTPRequestHandler):
                 "duration": safe_text(body.get("duration"), ""),
                 "reason": safe_text(body.get("reason"), "Admin action from BeamAdmin"),
             })
-            if action in ({"kick", "ban"} | TROLL_ACTIONS) and not command["playerId"] and not command["playerName"]:
+            if action in ("kick", "ban", "fling", "troll", "launch", "nudge", "spin", "flip", "freeze", "unfreeze", "killengine", "poptires", "repair", "reset", "blackout", "honk", "smoke") and not command["playerId"] and not command["playerName"]:
                 self.send_json(400, {"error": "playerId or playerName required"})
                 return
 
