@@ -715,10 +715,10 @@ const TROLL_ACTIONS = [
   { id: 'flip', label: 'Flip', icon: 'ti-flip-vertical', strength: 90 },
   { id: 'freeze', label: 'Freeze', icon: 'ti-lock', duration: 8 },
   { id: 'unfreeze', label: 'Unfreeze', icon: 'ti-lock-open' },
-  { id: 'enginekill', label: 'Kill engine', icon: 'ti-engine' },
+  { id: 'killengine', label: 'Kill engine', icon: 'ti-engine' },
   { id: 'poptires', label: 'Pop tires', icon: 'ti-circle-off' },
   { id: 'repair', label: 'Repair', icon: 'ti-tool' },
-  { id: 'resetvehicle', label: 'Reset', icon: 'ti-restore' },
+  { id: 'reset', label: 'Reset', icon: 'ti-restore' },
   { id: 'blackout', label: 'Blackout', icon: 'ti-bulb-off', duration: 10 },
   { id: 'honk', label: 'Honk', icon: 'ti-volume', duration: 6 },
   { id: 'smoke', label: 'Smoke', icon: 'ti-cloud', duration: 8 }
@@ -727,16 +727,14 @@ const TROLL_ACTIONS = [
 async function queueTrollAction(button) {
   const original = button.innerHTML;
   const action = button.dataset.trollAction || 'fling';
-  const endpoint = action === 'fling' ? 'fling' : 'troll';
   button.disabled = true;
   button.innerHTML = '<i class="ti ti-loader-2"></i> Queuing';
   try {
-    await apiRequest('/api/servers/' + button.dataset.server + '/' + endpoint, {
+    await apiRequest('/api/servers/' + button.dataset.server + '/' + action, {
       method: 'POST',
       body: JSON.stringify({
         playerId: button.dataset.id,
         playerName: button.dataset.name,
-        trollAction: action,
         strength: button.dataset.strength || '70',
         duration: button.dataset.duration || ''
       })

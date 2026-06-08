@@ -42,6 +42,10 @@ SERVERS = [
 SESSIONS = {}
 SESSION_USERS = {}
 SESSION_TTL = 12 * 60 * 60
+TROLL_ACTIONS = {
+    "fling", "launch", "nudge", "spin", "flip", "freeze", "unfreeze",
+    "killengine", "poptires", "repair", "reset", "blackout", "honk", "smoke",
+}
 USER_SERVER_ACCESS = {
     "alex": {"alex-server1"},
 }
@@ -486,7 +490,7 @@ class Handler(BaseHTTPRequestHandler):
             return
 
         parts = path.strip("/").split("/")
-        if len(parts) == 4 and parts[0] == "api" and parts[1] == "servers" and parts[3] in ("kick", "ban", "unban", "fling", "troll"):
+        if len(parts) == 4 and parts[0] == "api" and parts[1] == "servers" and parts[3] in ({"kick", "ban", "unban"} | TROLL_ACTIONS):
             server = server_by_id(parts[2], getattr(self, "current_username", ""))
             if not server:
                 self.send_json(404, {"error": "server not found"})
@@ -499,12 +503,11 @@ class Handler(BaseHTTPRequestHandler):
                 "playerName": safe_text(body.get("playerName"), ""),
                 "accountId": safe_text(body.get("accountId"), ""),
                 "ip": safe_text(body.get("ip"), ""),
-                "trollAction": safe_text(body.get("trollAction"), parts[3]),
                 "strength": safe_text(body.get("strength"), "70"),
                 "duration": safe_text(body.get("duration"), ""),
                 "reason": safe_text(body.get("reason"), "Admin action from BeamAdmin"),
             })
-            if action in ("kick", "ban", "fling", "troll") and not command["playerId"] and not command["playerName"]:
+            if action in ({"kick", "ban"} | TROLL_ACTIONS) and not command["playerId"] and not command["playerName"]:
                 self.send_json(400, {"error": "playerId or playerName required"})
                 return
 

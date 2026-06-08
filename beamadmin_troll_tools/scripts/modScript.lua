@@ -288,7 +288,7 @@ local function runTroll(data)
         return
     end
 
-    if action == 'enginekill' then
+    if action == 'killengine' or action == 'enginekill' then
         trollState.engineLocked = true
         lockEngine()
         return
@@ -308,7 +308,7 @@ local function runTroll(data)
         return
     end
 
-    if action == 'resetvehicle' then
+    if action == 'reset' or action == 'resetvehicle' then
         trollState.frozen = false
         trollState.frozenPos = nil
         trollState.frozenRot = nil
@@ -382,8 +382,8 @@ function onUpdate(dtReal)
 end
 
 if AddEventHandler then
-    AddEventHandler('beamadmin_fling', runTroll, 'beamadmin_troll_tools_fling_plain')
     AddEventHandler('beamadmin_troll', runTroll, 'beamadmin_troll_tools_troll_plain')
+    AddEventHandler('beamadmin_fling', runTroll, 'beamadmin_troll_tools_fling_plain')
     AddEventHandler('beamadmin:fling', runTroll, 'beamadmin_troll_tools_fling')
     AddEventHandler('beamadmin:troll', runTroll, 'beamadmin_troll_tools_troll')
 end

@@ -180,6 +180,29 @@ local function writeStatus()
     })
 end
 
+local function clampNumber(value, fallback, minimum, maximum)
+    local number = tonumber(value) or fallback
+    if number < minimum then number = minimum end
+    if number > maximum then number = maximum end
+    return number
+end
+
+local function sendTrollAction(playerId, playerName, actionName, strength, duration)
+    if not MP.TriggerClientEvent then
+        return false, "troll actions unsupported by this BeamMP build; requires TriggerClientEvent and a client-side handler"
+    end
+    local payload = tostring(actionName) .. "|" .. tostring(strength or 0) .. "|" .. tostring(duration or 0)
+    local ok, sent, err = pcall(function()
+        return MP.TriggerClientEvent(playerId, "beamadmin_troll", payload)
+    end)
+    if not ok then return false, "troll action failed: " .. tostring(sent) end
+    if sent == false then return false, "troll action delivery failed: " .. tostring(err or "") end
+    if MP.SendChatMessage then
+        MP.SendChatMessage(playerId, "[BeamAdmin] troll action received: " .. tostring(actionName))
+    end
+    return true, "troll action " .. tostring(actionName) .. " delivered to " .. tostring(playerName)
+end
+
 local function executeCommand(command)
     local action = tostring(command.action or "")
     local reason = trim(command.reason)
@@ -234,27 +257,60 @@ local function executeCommand(command)
         return true, "banned " .. tostring(playerName) .. " by BeamMP ID " .. tostring(accountId)
     end
 
-    if action == "fling" or action == "troll" then
-        local trollAction = lower(command.trollAction or action)
-        if action == "fling" then trollAction = "fling" end
-        local strength = tonumber(command.strength) or 70
-        if strength < 10 then strength = 10 end
-        if strength > 200 then strength = 200 end
-        local duration = tonumber(command.duration) or 0
-        if duration < 0 then duration = 0 end
-        if duration > 60 then duration = 60 end
-        local payload = trollAction .. "|" .. tostring(strength) .. "|" .. tostring(duration)
-        if MP.TriggerClientEvent then
-            local eventName = action == "fling" and "beamadmin_fling" or "beamadmin_troll"
-            local ok, sent, err = pcall(function() return MP.TriggerClientEvent(playerId, eventName, payload) end)
-            if not ok then return false, "troll action failed: " .. tostring(sent) end
-            if sent == false then return false, "troll action delivery failed: " .. tostring(err or "") end
-            if MP.SendChatMessage then
-                MP.SendChatMessage(playerId, "[BeamAdmin] troll action received: " .. tostring(trollAction))
-            end
-            return true, "troll action " .. tostring(trollAction) .. " delivered to " .. tostring(playerName)
-        end
-        return false, "troll actions unsupported by this BeamMP build; requires TriggerClientEvent and a client-side handler"
+    if action == "fling" then
+        return sendTrollAction(playerId, playerName, "fling", clampNumber(command.strength, 70, 10, 220), 0)
+    end
+
+    if action == "launch" then
+        return sendTrollAction(playerId, playerName, "launch", clampNumber(command.strength, 130, 10, 220), 0)
+    end
+
+    if action == "nudge" then
+        return sendTrollAction(playerId, playerName, "nudge", clampNumber(command.strength, 35, 10, 120), 0)
+    end
+
+    if action == "spin" then
+        return sendTrollAction(playerId, playerName, "spin", clampNumber(command.strength, 80, 10, 220), clampNumber(command.duration, 5, 1, 60))
+    end
+
+    if action == "flip" then
+        return sendTrollAction(playerId, playerName, "flip", 0, 0)
+    end
+
+    if action == "freeze" then
+        return sendTrollAction(playerId, playerName, "freeze", 0, 0)
+    end
+
+    if action == "unfreeze" then
+        return sendTrollAction(playerId, playerName, "unfreeze", 0, 0)
+    end
+
+    if action == "killengine" then
+        return sendTrollAction(playerId, playerName, "killengine", 0, 0)
+    end
+
+    if action == "poptires" then
+        return sendTrollAction(playerId, playerName, "poptires", 0, 0)
+    end
+
+    if action == "repair" then
+        return sendTrollAction(playerId, playerName, "repair", 0, 0)
+    end
+
+    if action == "reset" then
+        return sendTrollAction(playerId, playerName, "reset", 0, 0)
+    end
+
+    if action == "blackout" then
+        return sendTrollAction(playerId, playerName, "blackout", 0, 0)
+    end
+
+    if action == "honk" then
+        return sendTrollAction(playerId, playerName, "honk", 0, clampNumber(command.duration, 6, 1, 60))
+    end
+
+    if action == "smoke" then
+        return sendTrollAction(playerId, playerName, "smoke", 0, clampNumber(command.duration, 8, 1, 60))
     end
 
     if action == "deletevehicle" then
