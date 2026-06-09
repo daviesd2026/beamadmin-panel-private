@@ -112,19 +112,6 @@ local function onUpdate(dt)
   end
 end
 
-local function onExtensionLoaded()
-  log('I', 'beamadminTrollGe', 'extension loaded')
-  -- Listen for the forwarded event from cl_troll.lua
-  guihooks.trigger('beamadmin_troll_ge', '')
-end
-
--- GE extensions use these hook names
 M.onUpdate = onUpdate
-M.onExtensionLoaded = onExtensionLoaded
-M.onBeamAdminTrollGE = onBeamAdminTrollGE
-
--- Register the event from BeamMP client relay
-core_gamestate.requestLoad()
-extensions.hook("onBeamadminTrollGe", "beamadmin_troll_ge")
 
 return M
