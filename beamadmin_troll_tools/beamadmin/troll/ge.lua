@@ -76,7 +76,7 @@ local function onBeamAdminTrollGE(payload)
   end)
 
   if not ok then
-    log('E', 'beamadmin_troll_ge', 'action failed: ' .. tostring(err))
+    log('E', 'beamadminTrollGe', 'action failed: ' .. tostring(err))
   end
 end
 
@@ -113,7 +113,7 @@ local function onUpdate(dt)
 end
 
 local function onExtensionLoaded()
-  log('I', 'beamadmin_troll_ge', 'extension loaded')
+  log('I', 'beamadminTrollGe', 'extension loaded')
   -- Listen for the forwarded event from cl_troll.lua
   guihooks.trigger('beamadmin_troll_ge', '')
 end

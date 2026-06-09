@@ -4,11 +4,12 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 SOURCE = ROOT / "beamadmin_troll_tools" / "scripts"
+GE_SOURCE = ROOT / "beamadmin_troll_tools" / "beamadmin" / "troll"
 OUT = ROOT / "beamadmin_troll_tools.zip"
 
 FILES = {
     SOURCE / "cl_troll.lua": "scripts/cl_troll.lua",
-    SOURCE / "beamadmin_troll_ge.lua": "scripts/beamadmin_troll_ge.lua",
+    GE_SOURCE / "ge.lua": "beamadmin/troll/ge.lua",
     SOURCE / "modScript.lua": "modScript.lua",
 }
 
