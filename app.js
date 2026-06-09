@@ -119,8 +119,7 @@ const pageLabels = {
   settings:  'Settings',
   console:   'Console',
   logs:      'Logs',
-  management: 'Management tool',
-  troll: 'Troll'
+  management: 'Management tool'
 };
 
 function showPage(name) {
@@ -528,7 +527,6 @@ function renderLiveDashboard(servers) {
           '<td>' + htmlEscape(player.beammp || 'Guest / no BeamMP ID') + '</td>',
           '<td>' + htmlEscape(player.ip || '') + '</td>',
           '<td><div class="row-actions">',
-            '<button class="act-btn player-fling" data-server="' + htmlEscape(server.id) + '" data-id="' + htmlEscape(player.id) + '" data-name="' + htmlEscape(player.name) + '" data-strength="70"><i class="ti ti-arrow-big-up-lines"></i> Fling</button>',
             '<button class="act-btn player-kick" data-server="' + htmlEscape(server.id) + '" data-id="' + htmlEscape(player.id) + '" data-name="' + htmlEscape(player.name) + '"><i class="ti ti-logout"></i> Kick</button>',
             player.ip ? '<button class="act-btn danger player-ban" data-server="' + htmlEscape(server.id) + '" data-id="' + htmlEscape(player.id) + '" data-name="' + htmlEscape(player.name) + '" data-account="" data-ip="' + htmlEscape(player.ip || '') + '"><i class="ti ti-ban"></i> Ban IP</button>' : '<button class="act-btn danger" disabled title="Player has no IP address reported by the bridge"><i class="ti ti-ban"></i> No IP</button>',
           '</div></td>',
@@ -594,12 +592,6 @@ function renderLiveDashboard(servers) {
     refreshButton.addEventListener('click', loadLiveServers);
   }
 
-  document.querySelectorAll('.player-fling').forEach(function (button) {
-    button.addEventListener('click', async function () {
-      await queueFling(button);
-    });
-  });
-
   document.querySelectorAll('.player-kick, .player-ban').forEach(function (button) {
     button.addEventListener('click', async function () {
       const action = button.classList.contains('player-ban') ? 'ban' : 'kick';
@@ -663,7 +655,6 @@ function showManagedPage(name) {
     mods: renderModsPage,
     banlist: renderBanListPage,
     settings: renderSettingsPage,
-    troll: renderTrollPage,
     console: renderConsolePage,
     logs: renderLogsPage,
     management: renderManagementToolPage
@@ -705,111 +696,6 @@ function mapOptions(current) {
   return AVAILABLE_MAPS.map(function (name) {
     return '<option value="' + htmlEscape(name) + '"' + (name === current ? ' selected' : '') + '>' + htmlEscape(name) + '</option>';
   }).join('');
-}
-
-const TROLL_ACTIONS = [
-  { id: 'fling', label: 'Fling', icon: 'ti-arrow-big-up-lines', strength: 70 },
-  { id: 'launch', label: 'Launch', icon: 'ti-rocket', danger: true, strength: 130 },
-  { id: 'nudge', label: 'Nudge', icon: 'ti-arrows-random', strength: 35 },
-  { id: 'spin', label: 'Spin', icon: 'ti-refresh', strength: 80 },
-  { id: 'flip', label: 'Flip', icon: 'ti-flip-vertical', strength: 90 },
-  { id: 'freeze', label: 'Freeze', icon: 'ti-lock', duration: 8 },
-  { id: 'unfreeze', label: 'Unfreeze', icon: 'ti-lock-open' },
-  { id: 'killengine', label: 'Kill engine', icon: 'ti-engine' },
-  { id: 'poptires', label: 'Pop tires', icon: 'ti-circle-off' },
-  { id: 'repair', label: 'Repair', icon: 'ti-tool' },
-  { id: 'reset', label: 'Reset', icon: 'ti-restore' },
-  { id: 'blackout', label: 'Blackout', icon: 'ti-bulb-off', duration: 10 },
-  { id: 'honk', label: 'Honk', icon: 'ti-volume', duration: 6 },
-  { id: 'smoke', label: 'Smoke', icon: 'ti-cloud', duration: 8 }
-];
-
-async function queueTrollAction(button) {
-  const original = button.innerHTML;
-  const action = button.dataset.trollAction || 'fling';
-  button.disabled = true;
-  button.innerHTML = '<i class="ti ti-loader-2"></i> Queuing';
-  try {
-    await apiRequest('/api/servers/' + button.dataset.server + '/' + action, {
-      method: 'POST',
-      body: JSON.stringify({
-        playerId: button.dataset.id,
-        playerName: button.dataset.name,
-        strength: button.dataset.strength || '70',
-        duration: button.dataset.duration || ''
-      })
-    });
-    button.innerHTML = '<i class="ti ti-check"></i> Queued';
-    setTimeout(loadLiveServers, 2500);
-  } catch (err) {
-    alert(err.message);
-    button.innerHTML = original;
-  } finally {
-    setTimeout(function () {
-      button.disabled = false;
-      button.innerHTML = original;
-    }, 1400);
-  }
-}
-
-async function queueFling(button) {
-  button.dataset.trollAction = 'fling';
-  await queueTrollAction(button);
-}
-
-function trollButtonsFor(player, server) {
-  return TROLL_ACTIONS.map(function (action) {
-    return [
-      '<button class="act-btn troll-action' + (action.danger ? ' danger' : '') + '"',
-        ' data-server="' + htmlEscape(server.id) + '"',
-        ' data-id="' + htmlEscape(player.id) + '"',
-        ' data-name="' + htmlEscape(player.name) + '"',
-        ' data-troll-action="' + htmlEscape(action.id) + '"',
-        ' data-strength="' + htmlEscape(action.strength || '') + '"',
-        ' data-duration="' + htmlEscape(action.duration || '') + '">',
-        '<i class="ti ' + htmlEscape(action.icon) + '"></i> ' + htmlEscape(action.label),
-      '</button>'
-    ].join('');
-  }).join('');
-}
-
-async function renderTrollPage() {
-  renderLoading('Loading troll tools');
-  try {
-    const servers = await getServers();
-    const rows = [];
-    servers.forEach(function (server) {
-      const rawPlayers = (server.bridge || {}).players;
-      const players = Array.isArray(rawPlayers) ? rawPlayers : Object.values(rawPlayers || {});
-      players.forEach(function (player) {
-        rows.push({ server: server, player: player });
-      });
-    });
-    pageOther.innerHTML = [
-      '<div class="section troll-page"><div class="section-header"><span class="section-title">Troll tools</span><button class="act-btn" id="refresh-troll"><i class="ti ti-refresh"></i> Refresh</button></div>',
-      rows.length ? '<div class="troll-grid">' + rows.map(function (row) {
-        return [
-          '<article class="troll-card">',
-            '<div class="troll-card-head">',
-              '<div class="player-name"><div class="avatar av-a">' + htmlEscape((row.player.name || '?').slice(0, 2).toUpperCase()) + '</div><div><strong>' + htmlEscape(row.player.name) + '</strong><span>' + htmlEscape(row.server.name) + '</span></div></div>',
-              '<code>' + htmlEscape(row.player.beammp || 'Guest') + '</code>',
-            '</div>',
-            '<div class="troll-actions">' + trollButtonsFor(row.player, row.server) + '</div>',
-          '</article>'
-        ].join('');
-      }).join('') + '</div>' : '<div class="card page-state"><p>No players reported by the bridge yet.</p></div>',
-      '</div>'
-    ].join('');
-    document.getElementById('refresh-troll').addEventListener('click', renderTrollPage);
-    document.querySelectorAll('.troll-action').forEach(function (button) {
-      button.addEventListener('click', async function () {
-        await queueTrollAction(button);
-        setTimeout(renderTrollPage, 1800);
-      });
-    });
-  } catch (err) {
-    renderError(err.message, renderTrollPage);
-  }
 }
 
 async function renderVehiclesPage() {
