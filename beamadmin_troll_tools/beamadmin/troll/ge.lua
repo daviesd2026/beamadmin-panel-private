@@ -1,5 +1,4 @@
--- beamadmin_troll_ge.lua  BeamNG GE Lua extension for BeamAdmin troll actions
--- Loaded as a GE extension, has full access to BeamNG game engine APIs
+-- beamadmin/troll/ge.lua  BeamNG GE extension for BeamAdmin troll actions
 
 local M = {}
 
@@ -87,7 +86,9 @@ local function onUpdate(dt)
       veh:applyForce(vec3(0, 0, 9.81 * 1500))
     end
     freezeTimer = freezeTimer - dt
-    if freezeTimer <= 0 then freezeActive = false end
+    if freezeTimer <= 0 then
+      freezeActive = false
+    end
   end
   if honkTimer > 0 then
     honkTimer = honkTimer - dt
@@ -113,5 +114,8 @@ local function onUpdate(dt)
 end
 
 M.onUpdate = onUpdate
+M.onBeamAdminTrollGE = onBeamAdminTrollGE
+
+log('I', 'beamadminTrollGe', 'beamadmin/troll/ge loaded')
 
 return M
