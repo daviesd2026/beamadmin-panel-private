@@ -7,9 +7,8 @@ SOURCE = ROOT / "beamadmin_troll_tools"
 OUT = ROOT / "beamadmin_troll_tools.zip"
 
 FILES = {
-    SOURCE / "modScript.lua": "modScript.lua",
-    SOURCE / "scripts" / "cl_troll.lua": "scripts/cl_troll.lua",
-    SOURCE / "beamadmin" / "troll" / "ge.lua": "beamadmin/troll/ge.lua",
+    SOURCE / "scripts" / "modScript.lua": "scripts/modScript.lua",
+    SOURCE / "lua" / "ge" / "extensions" / "beamadmin_troll_tools.lua": "lua/ge/extensions/beamadmin_troll_tools.lua",
 }
 
 

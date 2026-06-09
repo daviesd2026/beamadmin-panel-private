@@ -1,1 +1,0 @@
-registerCoreModule("beamadmin/troll/ge")
